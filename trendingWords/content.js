@@ -1,14 +1,14 @@
-let tags = ["div", 'p', 'a', 'b', 'span', 'i', 'ul', 'li']; // Tags
-let elems = document.querySelectorAll(tags);
-let text_arr = [];
+const tags = ['div', 'p', 'a', 'b', 'span', 'i', 'ul', 'li']; // Tags
+const elems = document.querySelectorAll(tags);
+const text_arr = [];
 elems.forEach(function (elem) {
-  let text = $(elem).text().trim();
+  const text = $(elem).text().trim();
   if (text) {
     text_arr.push(text);
   }
-})
+});
 
-console.log("text array===>>>>>>", text_arr);
+console.log('text array===>>>>>>', text_arr);
 
 /*
 
@@ -28,24 +28,23 @@ axios.post('/user', {
 
 */
 
-
 // Mark and highlight words
 function highlighter(results) {
-  results.forEach(function(result) {
-    $("body").mark(result, {
-      "element": "span",
-      "className": "highlight",
-      "separateWordSearch": false
+  results.forEach(function (result) {
+    $('body').mark(result, {
+      element: 'span',
+      className: 'highlight',
+      separateWordSearch: false,
     });
-  })
-  chrome.storage.sync.get("color", ({ color}) => {
-    $(".highlight").css({"background-color": color});
-  })
+  });
+  chrome.storage.sync.get('color', ({ color }) => {
+    $('.highlight').css({ 'background-color': color });
+  });
 }
 
 // Erase highlights
 function eraser() {
-  $("body").unmark({"className":"highlight"});
+  $('body').unmark({ className: 'highlight' });
 }
 
 // tippy('.highlight', {
@@ -57,12 +56,11 @@ function eraser() {
 
 // Everytime the server passes the keywords
 // Run the functions below
-let results = ["war"]; 
-eraser()
+const results = ['war'];
+eraser();
 highlighter(results);
 
 // bootstrap.Tooltip.getOrCreateInstance($(".highlighter")[0]);
-
 
 // $("body").tooltip({
 //   placement:"right",
