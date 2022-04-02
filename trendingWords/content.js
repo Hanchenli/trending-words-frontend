@@ -1,72 +1,70 @@
-let tags = ["div", 'p', 'a', 'b', 'span', 'i', 'ul', 'li']; // Tags
-let elems = document.querySelectorAll(tags);
-let text_arr = [];
-elems.forEach(function (elem) {
-  let text = $(elem).text().trim();
-  if (text) {
-    text_arr.push(text);
-  }
-})
+const instance = axios.create({
+  baseURL: 'http://162.243.174.63:8000/api/',
+  timeout: 1000,
+});
 
-console.log("text array===>>>>>>", text_arr);
-
-/*
-
-axios.post('/user', {
-    firstName: 'Fred',
-    lastName: 'Flintstone'
-  })
-  .then(function (response) {
-
-    //
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-
-
-*/
-
-
-// Mark and highlight words
-function highlighter(results) {
-  results.forEach(function(result) {
-    $("body").mark(result, {
-      "element": "span",
-      "className": "highlight",
-      "separateWordSearch": false
+/**
+ * Retrieve the response from the trending endpoint
+ * @param {} wordList
+ */
+async function trendingWords(wordList) {
+  console.log(wordList);
+  instance
+    .post('trending/', wordList)
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      console.error(err);
     });
-  })
-  chrome.storage.sync.get("color", ({ color}) => {
-    $(".highlight").css({"background-color": color});
-  })
 }
 
-// Erase highlights
+/**
+ * Extracts all text from HTML page
+ * @returns List of extracted text
+ */
+function extractPageText() {
+  const tags = ['div', 'p', 'a', 'b', 'span', 'i', 'ul', 'li']; // Tags
+  const elems = document.querySelectorAll(tags);
+  const text_arr = [];
+  elems.forEach(function (elem) {
+    const text = $(elem).text().trim();
+    if (text) {
+      text_arr.push(text);
+    }
+  });
+  return text_arr;
+}
+
+/**
+ * Mark and highlight words
+ */
+function highlighter(results) {
+  results.forEach(function (result) {
+    $('body').mark(result, {
+      accuracy: 'exactly',
+      element: 'span',
+      className: 'highlight',
+      separateWordSearch: false,
+    });
+  });
+  chrome.storage.sync.get('color', ({ color }) => {
+    $('.highlight').css({ 'background-color': color });
+  });
+}
+
+/**
+ * Erase highlights
+ */
 function eraser() {
-  $("body").unmark({"className":"highlight"});
+  $('body').unmark({ className: 'highlight' });
 }
 
-// tippy('.highlight', {
-//   content: 'My tooltip!',
-//   placement: "right",
-//   theme:"light",
-//   trigger:"click"
-// });
-
+// Main program text
+const wordList = extractPageText();
+trendingWords(wordList);
 // Everytime the server passes the keywords
 // Run the functions below
-let results = ["war"]; 
-eraser()
+const results = ['war'];
+eraser();
 highlighter(results);
-
-// bootstrap.Tooltip.getOrCreateInstance($(".highlighter")[0]);
-
-
-// $("body").tooltip({
-//   placement:"right",
-//   selector:".highlight"
-// });
-
-// Add Tooltip for highlighted words
